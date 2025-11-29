@@ -1,22 +1,6 @@
 import { createInterface } from "readline";
 import { State, CLICommand } from "./state.js";
 
-
-// export function getCommands(): Record<string, CLICommand> {
-//   return {
-//     exit: {
-//       name: "exit",
-//       description: "Exits the Pokedex",
-//       callback: commandExit,
-//     },
-//     help: {
-//       name: "help",
-//       description: "Helps with the usage of Pokedex",
-//       callback: command_help,
-//     },
-//   };
-// }
-
 export function cleanInput(input: string): string[] {
   const trimmed = input.trim().toLowerCase();
   if (trimmed == "") {
@@ -27,11 +11,6 @@ export function cleanInput(input: string): string[] {
 }
 
 export function startREPL(state: State) {
-  // const rl = createInterface({
-  //   input: process.stdin,
-  //   output: process.stdout,
-  //   prompt: 'Pokedex >'
-  // });
   state.rl.prompt();
   state.rl.on("line", async (input) => {
     if (input === "") {

@@ -1,0 +1,56 @@
+import { createInterface, type Interface } from "readline";
+import { commandExit } from "./command_exit.js";
+import { commandHelp } from "./command_help.js";
+import { commandMap, commandMapBack } from "./command_map.js";
+import { PokeAPI } from "./pokeapi.js";
+import { Cache } from "./pokecache.js";
+
+export type CLICommand = {
+  name: string;
+  description: string;
+  callback: (state: State) => Promise<void>;
+}
+
+export type State = {
+  rl: Interface;
+  commands: CLICommand[];
+  pokeapi: PokeAPI;
+  nextLocationsURL: string | null;
+  previousLocationsURL: string | null;
+}
+
+export async function initState(): Promise<State> {
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    prompt: 'Pokedex >'
+  });
+  const commands: CLICommand[] = [
+    {
+      name: "exit",
+      description: "Exits the Pokedex",
+      callback: commandExit,
+    },
+    {
+      name: "help",
+      description: "Helps with the usage of Pokedex",
+      callback: commandHelp,
+    },
+    {
+      name: "map",
+      description: "List 20 locations areas on the Pokedex Map",
+      callback: commandMap,
+    },
+    {
+      name: "mapb",
+      description: "List the previous 20 locations areas on the Pokedex Map",
+      callback: commandMapBack,
+    },
+  ]
+
+  const cache = new Cache(60);
+  const pokeapi = new PokeAPI(cache);
+  const nextLocationsURL = null;
+  const previousLocationsURL = null;
+  return { rl, commands, pokeapi, nextLocationsURL, previousLocationsURL };
+}

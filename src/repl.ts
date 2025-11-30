@@ -17,11 +17,12 @@ export function startREPL(state: State) {
       state.rl.prompt();
     } else {
       const lst = cleanInput(input);
-      const cmd = lst[0]
+      const cmd = lst[0];
+      const args = lst.slice(1);
       try {
         const cmdObj = state.commands.find(command => command.name === cmd);
         if (cmdObj) {
-          await cmdObj.callback(state);
+          await cmdObj.callback(state, ...args);
         } else {
           console.log(`Unknown command: ${cmd}`);
         }

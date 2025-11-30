@@ -4,11 +4,12 @@ import { commandHelp } from "./command_help.js";
 import { commandMap, commandMapBack } from "./command_map.js";
 import { PokeAPI } from "./pokeapi.js";
 import { Cache } from "./pokecache.js";
+import { commandExplore } from "./command_explore.js";
 
 export type CLICommand = {
   name: string;
   description: string;
-  callback: (state: State) => Promise<void>;
+  callback: (state: State, ...args: string[]) => Promise<void>;
 }
 
 export type State = {
@@ -45,6 +46,11 @@ export async function initState(): Promise<State> {
       name: "mapb",
       description: "List the previous 20 locations areas on the Pokedex Map",
       callback: commandMapBack,
+    },
+    {
+      name: "explore",
+      description: "List All the pokemon in a given area",
+      callback: commandExplore,
     },
   ]
 

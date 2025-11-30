@@ -2,9 +2,11 @@ import { createInterface, type Interface } from "readline";
 import { commandExit } from "./command_exit.js";
 import { commandHelp } from "./command_help.js";
 import { commandMap, commandMapBack } from "./command_map.js";
-import { PokeAPI } from "./pokeapi.js";
+import { PokeAPI, Pokemon } from "./pokeapi.js";
 import { Cache } from "./pokecache.js";
 import { commandExplore } from "./command_explore.js";
+import { commandCatch } from "./command_catch.js";
+import { commandInspect } from "./command_inspect.js";
 
 export type CLICommand = {
   name: string;
@@ -18,6 +20,7 @@ export type State = {
   pokeapi: PokeAPI;
   nextLocationsURL: string | null;
   previousLocationsURL: string | null;
+  pokedex: Record<string, Pokemon>;
 }
 
 export async function initState(): Promise<State> {
@@ -52,11 +55,22 @@ export async function initState(): Promise<State> {
       description: "List All the pokemon in a given area",
       callback: commandExplore,
     },
+    {
+      name: "catch",
+      description: "Catch pokemon",
+      callback: commandCatch,
+    },
+    {
+      name: "inspect",
+      description: "See the pokemon caught by you",
+      callback: commandInspect,
+    },
   ]
 
   const cache = new Cache(60);
   const pokeapi = new PokeAPI(cache);
   const nextLocationsURL = null;
   const previousLocationsURL = null;
-  return { rl, commands, pokeapi, nextLocationsURL, previousLocationsURL };
+  const pokedex = {}
+  return { rl, commands, pokeapi, nextLocationsURL, previousLocationsURL, pokedex };
 }

@@ -71,6 +71,38 @@ export class PokeAPI {
     }
   }
 
+  async getPokemon(params: number | string): Promise<Pokemon | null> {
+    try {
+      const url = `${PokeAPI.baseURL}/pokemon/${params}`;
+      const res = await fetch(url);
+      const pokemon: Pokemon = await res.json();
+      return pokemon;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(`Error: ${err.message}`);
+      }
+      return null
+    }
+  }
+
+  async catchPokemon(params: number | string): Promise<boolean | null> {
+    try {
+      const url = `${PokeAPI.baseURL}/pokemon/${params}`;
+      const res = await fetch(url);
+      const pokemon: Pokemon = await res.json();
+      const max_xp = 300;
+      let base_xp = pokemon.base_experience > max_xp ? max_xp : pokemon.base_experience;
+      const difficulty = base_xp / max_xp;
+      const catchChance = 1 - difficulty;
+      const caught = Math.random() < catchChance;
+      return caught;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(`Error: ${err.message}`);
+      }
+      return null
+    }
+  }
 }
 
 export type ShallowLocation = {
@@ -131,4 +163,116 @@ export interface LocationArea {
   location: NamedAPIResource;
   names: AreaName[];
   pokemon_encounters: PokemonEncounter[];
+}
+
+
+interface Ability {
+  is_hidden: boolean;
+  slot: number;
+  ability: NamedAPIResource;
+}
+
+interface Form {
+  name: string;
+  url: string;
+}
+
+interface GameIndex {
+  game_index: number;
+  version: NamedAPIResource;
+}
+
+interface HeldItem {
+  item: NamedAPIResource;
+  version_details: {
+    rarity: number;
+    version: NamedAPIResource;
+  }[];
+}
+
+interface Move {
+  move: NamedAPIResource;
+  version_group_details: {
+    level_learned_at: number;
+    version_group: NamedAPIResource;
+    move_learn_method: NamedAPIResource;
+    order: number;
+  }[];
+}
+
+interface PokemonStat {
+  base_stat: number;
+  effort: number;
+  stat: NamedAPIResource;
+}
+
+interface PokemonType {
+  slot: number;
+  type: NamedAPIResource;
+}
+
+interface Sprites {
+  back_default: string | null;
+  back_female: string | null;
+  back_shiny: string | null;
+  back_shiny_female: string | null;
+  front_default: string | null;
+  front_female: string | null;
+  front_shiny: string | null;
+  front_shiny_female: string | null;
+  other?: {
+    'official-artwork': {
+      front_default: string | null;
+      front_shiny: string | null;
+    };
+  };
+}
+
+interface Cries {
+  latest: string;
+  legacy: string;
+}
+
+// Main Pokemon interface
+export interface Pokemon {
+  id: number;
+  name: string;
+  base_experience: number;
+  height: number;
+  is_default: boolean;
+  order: number;
+  weight: number;
+  abilities: Ability[];
+  forms: Form[];
+  game_indices: GameIndex[];
+  held_items: HeldItem[];
+  location_area_encounters: string;
+  moves: Move[];
+  species: NamedAPIResource;
+  sprites: Sprites;
+  cries: Cries;
+  stats: PokemonStat[];
+  types: PokemonType[];
+  past_types: any[];
+  past_abilities: any[];
+}
+
+// Simplified interface for display purposes
+export interface PokemonSummary {
+  id: number;
+  name: string;
+  types: string[];
+  height: number;
+  weight: number;
+  base_experience: number;
+  sprite: string | null;
+  abilities: string[];
+  stats: {
+    hp: number;
+    attack: number;
+    defense: number;
+    speed: number;
+    special_attack: number;
+    special_defense: number;
+  };
 }
